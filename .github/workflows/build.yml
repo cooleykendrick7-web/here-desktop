@@ -1,0 +1,33 @@
+name: Build HERE Desktop (Mac + Windows)
+
+# Mirrors the 2X Studio Go packaging route: the installers are
+# built on real macOS and Windows runners, never on Linux.
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Build installer
+        run: npx electron-builder --publish never
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: here-desktop-${{ matrix.os }}
+          path: |
+            dist/*.dmg
+            dist/*.exe
+          if-no-files-found: error
