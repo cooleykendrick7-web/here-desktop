@@ -1,37 +1,62 @@
-# HERE Desktop
+# HERE Desktop — HERE for Mac + Windows, with HERE Studio
 
-HERE for Mac + Windows — with HERE Studio (live stream studio).
+Ken's order (Nov 10, 2026): do for HERE what 2X Studio Go did —
+a real computer app for Mac + Windows — with a live stream
+studio like TikTok LIVE Studio inside it.
 
-HERE Desktop puts the HERE platform (https://joincomehere.com) in its own Mac and Windows app window, instead of a browser tab. It is the Phase 1 desktop shell for HERE.
+## What Phase 1 is (this code)
 
-## What it does
+- **The HERE app**: HERE (joincomehere.com) in its own app
+  window — dock/taskbar presence, its own icon (the HERE
+  wordmark), an app menu (Home / Peeps / Platforms / Messages),
+  and outside links handed to the system browser. Google
+  sign-in stays in-app so HERE's Google login works.
+- **HERE Studio window** (menu → Studio → *Open HERE Studio*,
+  or Ctrl/Cmd+Shift+S): a second, bigger window on HERE's live
+  pages, where the platform's existing Studio + Live Connect
+  compositing already runs (scenes on a canvas, camera /
+  capture-card / screen sources). The desktop shell adds the
+  parts a browser tab can't do well:
+  - camera/microphone/display permissions granted to HERE's
+    origins only;
+  - a display-capture handler so screen sharing works in-app;
+  - a **native source bridge** (`window.hereDesktop.getSources()`)
+    that lists real windows + screens with thumbnails via
+    Electron's desktopCapturer — the picker UI that consumes
+    it lands with the Studio page in Phase 2.
+- Session and data are the user's own HERE account, exactly as
+  in a browser — the app signs in the same way.
 
-- Loads the live HERE site in the main app window.
-- Opens HERE Studio in its own window at https://joincomehere.com/live, where HERE's own Studio and Live Connect compositing already lives.
-- Adds what a browser tab cannot: a real app in the Dock / taskbar, its own window, native-grade screen and window source picking for Studio (via the `preload.js` IPC bridge), and media and display permission handling scoped to HERE's own origins.
+## Run it (dev)
 
-## Run it
-
-```bash
+```sh
 npm install
 npm start
 ```
 
 ## Build installers
 
-```bash
-npm run dist
-npm run dist:mac
-npm run dist:win
+Installers are built on real Mac/Windows machines (or the
+GitHub Actions workflow in `.github/workflows/build.yml`,
+which mirrors the 2X Studio Go pipeline):
+
+```sh
+npm run dist:mac   # .dmg
+npm run dist:win   # .exe (NSIS)
 ```
 
-The GitHub Actions workflow `.github/workflows/build.yml` ("Build HERE Desktop (Mac + Windows)") can also be run manually from the Actions tab. It builds the macOS DMG and the Windows installer with electron-builder and uploads them as artifacts.
+Unsigned for now — like 2X Studio Go, first open on Mac is
+right-click → Open, until signing certificates are bought.
 
-## Files
+## Roadmap (from the TikTok LIVE Studio feature map)
 
-- `main.js` — Electron main process
-- `preload.js` — preload bridge for Studio source picking
-- `package.json` — app manifest and electron-builder config
-- `assets/icon.png` — HERE app icon
+- **Phase 1** — this: app shell + Studio window + capture
+  permissions + native source bridge. ✅ foundation
+- **Phase 2** — the dedicated Studio page: scenes rail,
+  canvas editor, audio mixer, portrait + dual layout, live
+  chat/gifts/data panel, native source-picker UI.
+- **Phase 3** — local recording + Highlight clips, polls and
+  goal widgets, background removal/beauty, templates/themes.
 
-Requires Node.js 22.
+No follower gates, no locked sources, no trial — that's
+TikTok's model, not HERE's.
